@@ -2,9 +2,6 @@
 // ##                                                                       ##
 // ##   SIMASTER AUTOLOGIN — CARA PASANG                                    ##
 // ##                                                                       ##
-// ##   Kalau kamu lihat teks ini sebagai halaman biasa di browser,         ##
-// ##   berarti Violentmonkey belum terpasang. Ikuti langkah 1 dulu.        ##
-// ##                                                                       ##
 // ##   LANGKAH 1 — PASANG VIOLENTMONKEY (sekali saja)                      ##
 // ##                                                                       ##
 // ##   Chrome / Brave / Edge / Opera:                                      ##
@@ -37,7 +34,7 @@
 // ==UserScript==
 // @name         SIMASTER autologin
 // @namespace    https://github.com/dzaki-bv/simaster-autologin
-// @version      3.3
+// @version      3.4
 // @description  Auto-login SIMASTER UGM: fills UGM ID on SSO, solves the captcha in-browser (ddddocr), submits.
 // @match        https://simaster.ugm.ac.id/ugmfw/signin_simaster*
 // @match        https://sso.ugm.ac.id/cas/login*
