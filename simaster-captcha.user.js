@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SIMASTER autologin
 // @namespace    https://github.com/dzaki-bv/simaster-autologin
-// @version      3.0
+// @version      3.1
 // @description  Auto-login SIMASTER UGM: fills UGM ID on SSO, solves the captcha in-browser (ddddocr), submits.
 // @match        https://simaster.ugm.ac.id/ugmfw/signin_simaster*
 // @match        https://sso.ugm.ac.id/cas/login*
@@ -21,7 +21,14 @@
 // ##                                                                       ##
 // ##   >>>   ISI USERNAME DAN PASSWORD UGM ID KAMU DI BAWAH INI   <<<      ##
 // ##                                                                       ##
-// ##   Tulis di antara tanda kutip, lalu simpan (Ctrl+S).                  ##
+// ##   CARA ISI:                                                           ##
+// ##   (Kalau kamu lihat ini di halaman install: belum bisa diedit.        ##
+// ##    Klik "Install" dulu.)                                              ##
+// ##   1. Ikon Violentmonkey di toolbar -> Open Dashboard (ikon gerigi)    ##
+// ##   2. Installed scripts -> SIMASTER autologin -> ikon </> (Edit)       ##
+// ##   3. Tulis username & password di antara tanda kutip di bawah         ##
+// ##   4. Ctrl+S (Save), lalu Save & Close                                 ##
+// ##                                                                       ##
 // ##   Contoh:  const USERNAME = "namakamu";                               ##
 // ##            const PASSWORD = "passwordkamu";                           ##
 // ##                                                                       ##
