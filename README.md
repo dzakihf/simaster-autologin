@@ -17,16 +17,17 @@
 
 ### Langkah 2 — Pasang script
 
-1. Buka link ini, lalu klik **Install** (atau **Confirm installation**):
+1. Buka link ini:
    https://raw.githubusercontent.com/dzaki-bv/simaster-autologin/main/simaster-captcha.user.js
+2. Violentmonkey membuka halaman install. Klik **+Edit** (bukan *Install*) — script langsung terpasang dan editornya terbuka.
 
-   > ⚠️ Kode di halaman install itu cuma **pratinjau, tidak bisa diedit**. Install dulu, baru isi username/password lewat dashboard (langkah 2–5 di bawah).
+   > ⚠️ Kode di bagian bawah halaman install itu cuma **pratinjau, tidak bisa diedit**. Pakai tombol **+Edit**.
 
-2. Klik ikon **Violentmonkey** di toolbar browser → **Open Dashboard** (ikon gerigi ⚙).
-3. Di **Installed scripts**, cari **SIMASTER autologin** → klik ikon **`</>`** (Edit).
-4. Di bagian paling atas ada kotak besar. Isi `USERNAME` dan `PASSWORD` UGM ID kamu **di antara tanda kutip**.
-5. Tekan **Ctrl+S** (atau klik **Save**), lalu **Save & Close**.
-6. Buka SIMASTER dan login lewat UGM ID — selanjutnya otomatis.
+3. Di editor, bagian paling atas (di bawah baris `@match` / `@grant`) ada kotak besar. Isi `USERNAME` dan `PASSWORD` UGM ID kamu **di antara tanda kutip**.
+4. Tekan **Ctrl+S** (atau klik **Save**), lalu **Save & Close**.
+5. Buka SIMASTER dan login lewat UGM ID — selanjutnya otomatis.
+
+Mau ganti username/password nanti: ikon **Violentmonkey** → **Open Dashboard** (ikon gerigi ⚙) → **Installed scripts** → **SIMASTER autologin** → ikon **`</>`** (Edit).
 
 Script ini **tidak auto-update** (supaya username/password yang kamu isi tidak tertimpa). Untuk versi baru, install ulang dari link di atas lalu isi lagi.
 

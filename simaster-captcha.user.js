@@ -27,16 +27,17 @@
 // ##     1. Buka lagi link script ini (refresh halaman ini):               ##
 // ##        https://raw.githubusercontent.com/dzaki-bv/                    ##
 // ##        simaster-autologin/main/simaster-captcha.user.js               ##
-// ##     2. Violentmonkey membuka halaman install -> klik "Install"        ##
+// ##     2. Violentmonkey membuka halaman install -> klik "+Edit"          ##
+// ##        (install sekaligus langsung buka editor)                       ##
 // ##     3. Isi username & password: lihat kotak besar di bawah            ##
-// ##        (di bawah baris-baris @match / @grant).                        ##
+// ##        (di bawah baris-baris @match / @grant), lalu Ctrl+S.           ##
 // ##                                                                       ##
 // ###########################################################################
 
 // ==UserScript==
 // @name         SIMASTER autologin
 // @namespace    https://github.com/dzaki-bv/simaster-autologin
-// @version      3.2
+// @version      3.3
 // @description  Auto-login SIMASTER UGM: fills UGM ID on SSO, solves the captcha in-browser (ddddocr), submits.
 // @match        https://simaster.ugm.ac.id/ugmfw/signin_simaster*
 // @match        https://sso.ugm.ac.id/cas/login*
@@ -58,11 +59,12 @@
 // ##                                                                       ##
 // ##   CARA ISI:                                                           ##
 // ##   (Kalau kamu lihat ini di halaman install: belum bisa diedit.        ##
-// ##    Klik "Install" dulu.)                                              ##
-// ##   1. Ikon Violentmonkey di toolbar -> Open Dashboard (ikon gerigi)    ##
-// ##   2. Installed scripts -> SIMASTER autologin -> ikon </> (Edit)       ##
-// ##   3. Tulis username & password di antara tanda kutip di bawah         ##
-// ##   4. Ctrl+S (Save), lalu Save & Close                                 ##
+// ##    Klik tombol "+Edit" di atas -> script terpasang & editor terbuka.) ##
+// ##   1. Tulis username & password di antara tanda kutip di bawah         ##
+// ##   2. Ctrl+S (Save), lalu Save & Close                                 ##
+// ##                                                                       ##
+// ##   Mau edit lagi nanti: ikon Violentmonkey -> Open Dashboard (gerigi)  ##
+// ##   -> Installed scripts -> SIMASTER autologin -> ikon </> (Edit)       ##
 // ##                                                                       ##
 // ##   Contoh:  const USERNAME = "namakamu";                               ##
 // ##            const PASSWORD = "passwordkamu";                           ##
