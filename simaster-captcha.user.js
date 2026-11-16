@@ -1,7 +1,42 @@
+// ###########################################################################
+// ##                                                                       ##
+// ##   SIMASTER AUTOLOGIN — CARA PASANG                                    ##
+// ##                                                                       ##
+// ##   Kalau kamu lihat teks ini sebagai halaman biasa di browser,         ##
+// ##   berarti Violentmonkey belum terpasang. Ikuti langkah 1 dulu.        ##
+// ##                                                                       ##
+// ##   LANGKAH 1 — PASANG VIOLENTMONKEY (sekali saja)                      ##
+// ##                                                                       ##
+// ##   Chrome / Brave / Edge / Opera:                                      ##
+// ##     1. Buka: https://chromewebstore.google.com/detail/violentmonkey/  ##
+// ##              jinjaccalgkegednnccohejagnlnfdag                         ##
+// ##     2. Klik "Add to Chrome" (Brave/Edge: "Add to Brave" / "Get")      ##
+// ##        -> "Add extension"                                             ##
+// ##     3. Ikon puzzle di toolbar -> pin "Violentmonkey"                  ##
+// ##     4. Kalau script nanti tidak jalan: buka chrome://extensions       ##
+// ##        (brave://extensions / edge://extensions) -> Violentmonkey      ##
+// ##        -> Details -> nyalakan "Allow User Scripts". Kalau tidak ada,  ##
+// ##        nyalakan "Developer mode" di pojok kanan atas.                 ##
+// ##                                                                       ##
+// ##   Firefox:                                                            ##
+// ##     1. Buka: https://addons.mozilla.org/firefox/addon/violentmonkey/  ##
+// ##     2. Klik "Add to Firefox" -> "Add"                                 ##
+// ##                                                                       ##
+// ##   LANGKAH 2 — PASANG SCRIPT INI                                       ##
+// ##                                                                       ##
+// ##     1. Buka lagi link script ini (refresh halaman ini):               ##
+// ##        https://raw.githubusercontent.com/dzaki-bv/                    ##
+// ##        simaster-autologin/main/simaster-captcha.user.js               ##
+// ##     2. Violentmonkey membuka halaman install -> klik "Install"        ##
+// ##     3. Isi username & password: lihat kotak besar di bawah            ##
+// ##        (setelah ==UserScript==).                                      ##
+// ##                                                                       ##
+// ###########################################################################
+
 // ==UserScript==
 // @name         SIMASTER autologin
 // @namespace    https://github.com/dzaki-bv/simaster-autologin
-// @version      3.1
+// @version      3.2
 // @description  Auto-login SIMASTER UGM: fills UGM ID on SSO, solves the captcha in-browser (ddddocr), submits.
 // @match        https://simaster.ugm.ac.id/ugmfw/signin_simaster*
 // @match        https://sso.ugm.ac.id/cas/login*
