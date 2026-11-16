@@ -29,7 +29,7 @@
 // ##        simaster-autologin/main/simaster-captcha.user.js               ##
 // ##     2. Violentmonkey membuka halaman install -> klik "Install"        ##
 // ##     3. Isi username & password: lihat kotak besar di bawah            ##
-// ##        (setelah ==UserScript==).                                      ##
+// ##        (di bawah baris-baris @match / @grant).                        ##
 // ##                                                                       ##
 // ###########################################################################
 
