@@ -34,7 +34,7 @@
 // ==UserScript==
 // @name         UGM autologin
 // @namespace    https://github.com/dzakihf/ugm-autologin
-// @version      4.0
+// @version      4.1
 // @description  Auto-login SIMASTER & ELOK UGM: clicks SSO UGM on ELOK, fills UGM ID on SSO, solves the SIMASTER captcha in-browser (ddddocr), submits.
 // @match        https://simaster.ugm.ac.id/ugmfw/signin_simaster*
 // @match        https://sso.ugm.ac.id/cas/login*
@@ -42,6 +42,7 @@
 // @grant        GM_getResourceURL
 // @grant        GM_getValue
 // @grant        GM_setValue
+// @grant        GM.setValue
 // @require      https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.3/dist/ort.wasm.min.js
 // @resource     ortwasm https://unpkg.com/onnxruntime-web@1.17.3/dist/ort-wasm-simd.wasm
 // @resource     model https://raw.githubusercontent.com/dzakihf/ugm-autologin/main/common_old.onnx
@@ -78,6 +79,7 @@ const PASSWORD = "";
 // ###########################################################################
 
 (() => {
+  const log = (...a) => console.log("[ugm-autologin]", ...a);
   // Max 3 automatic submits per minute per key, so a wrong captcha/password
   // doesn't loop forever.
   function allowAuto(key) {
@@ -85,7 +87,7 @@ const PASSWORD = "";
     let hist = [];
     try { hist = JSON.parse(sessionStorage.getItem(key) || "[]"); } catch {}
     hist = hist.filter((t) => now - t < 60000);
-    if (hist.length >= 3) { console.warn("[autologin] paused:", key); return false; }
+    if (hist.length >= 3) { log("auto-click limit reached (3/min):", key); return false; }
     hist.push(now);
     try { sessionStorage.setItem(key, JSON.stringify(hist)); } catch {}
     return true;
@@ -106,7 +108,20 @@ const PASSWORD = "";
     const manualLogin = /ugm\s*id/i.test(label) || href.includes("signin_proses");
     const elokLogout = location.hostname === "elok.ugm.ac.id" &&
       (href.includes("/login/logout.php") || el.dataset.identifier === "logout,moodle");
-    if (manualLogin || elokLogout) GM_setValue("manualUntil", Date.now() + PAUSE_MS);
+    if (!manualLogin && !elokLogout) return;
+    // Hold the navigation until the pause is actually stored; otherwise the
+    // next page (SSO) can start before the value is saved and log in anyway.
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    const until = Date.now() + PAUSE_MS;
+    GM_setValue("manualUntil", until);
+    log("manual", manualLogin ? "login" : "logout", "→ paused 5 min");
+    Promise.resolve(GM.setValue("manualUntil", until)).catch(() => {})
+      .then(() => new Promise((r) => setTimeout(r, 150)))
+      .then(() => {
+        if (el.tagName === "A" && el.href) location.href = el.href;
+        else el.click(); // untrusted click → ignored by this listener
+      });
   }, true);
 
   function login() {
@@ -204,7 +219,7 @@ const PASSWORD = "";
   }
 
   function solve(img) {
-    if (paused()) return;
+    if (paused()) return log("paused, not solving captcha");
     // At document-start the image can finish loading before the form is parsed.
     if (document.readyState === "loading" && !document.querySelector("input#captcha"))
       return document.addEventListener("DOMContentLoaded", () => solve(img), { once: true });
@@ -224,16 +239,26 @@ const PASSWORD = "";
 
   // Click "Proses". Guard against a submit loop when OCR keeps misreading:
   // at most 3 auto-submits per minute.
+  // Click the captcha form's submit button ("Proses"/"Kirim"/...).
+  function findSubmit() {
+    const form = document.querySelector("input#captcha")?.form;
+    return form?.querySelector('button[type="submit"], input[type="submit"]') ||
+      [...document.querySelectorAll('button[type="submit"], input[type="submit"]')]
+        .find((b) => /proses|kirim|submit|login|masuk/i.test(b.textContent + " " + (b.value || "")));
+  }
   function submit(text) {
-    if (text.length < 4) return;
-    const btn = [...document.querySelectorAll('button[type="submit"]')]
-      .find((b) => b.textContent.trim() === "Proses");
+    if (text.length < 4) return log("captcha too short, not submitting:", text);
+    const btn = findSubmit();
     if (!btn) {
       if (document.readyState === "loading")
-        document.addEventListener("DOMContentLoaded", () => submit(text), { once: true });
+        return document.addEventListener("DOMContentLoaded", () => submit(text), { once: true });
+      const form = document.querySelector("input#captcha")?.form;
+      if (form && allowAuto("captchaAutoSubmit")) { log("submit via form"); form.requestSubmit(); }
+      else log("no submit button found");
       return;
     }
     if (!allowAuto("captchaAutoSubmit")) return;
+    log("captcha", text, "→ click", btn.textContent.trim() || btn.value);
     btn.click();
   }
 
