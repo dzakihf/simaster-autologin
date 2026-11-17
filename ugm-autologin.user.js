@@ -1,6 +1,6 @@
 // ###########################################################################
 // ##                                                                       ##
-// ##   SIMASTER AUTOLOGIN — CARA PASANG                                    ##
+// ##   UGM AUTOLOGIN (SIMASTER + ELOK) — CARA PASANG                       ##
 // ##                                                                       ##
 // ##   LANGKAH 1 — PASANG VIOLENTMONKEY (sekali saja)                      ##
 // ##                                                                       ##
@@ -22,8 +22,8 @@
 // ##   LANGKAH 2 — PASANG SCRIPT INI                                       ##
 // ##                                                                       ##
 // ##     1. Buka lagi link script ini (refresh halaman ini):               ##
-// ##        https://raw.githubusercontent.com/dzaki-bv/                    ##
-// ##        simaster-autologin/main/simaster-captcha.user.js               ##
+// ##        https://raw.githubusercontent.com/dzakihf/                     ##
+// ##        ugm-autologin/main/ugm-autologin.user.js                       ##
 // ##     2. Violentmonkey membuka halaman install -> klik "+Edit"          ##
 // ##        (install sekaligus langsung buka editor)                       ##
 // ##     3. Isi username & password: lihat kotak besar di bawah            ##
@@ -32,18 +32,19 @@
 // ###########################################################################
 
 // ==UserScript==
-// @name         SIMASTER autologin
-// @namespace    https://github.com/dzaki-bv/simaster-autologin
-// @version      3.4
-// @description  Auto-login SIMASTER UGM: fills UGM ID on SSO, solves the captcha in-browser (ddddocr), submits.
+// @name         UGM autologin
+// @namespace    https://github.com/dzakihf/ugm-autologin
+// @version      4.0
+// @description  Auto-login SIMASTER & ELOK UGM: clicks SSO UGM on ELOK, fills UGM ID on SSO, solves the SIMASTER captcha in-browser (ddddocr), submits.
 // @match        https://simaster.ugm.ac.id/ugmfw/signin_simaster*
 // @match        https://sso.ugm.ac.id/cas/login*
+// @match        https://elok.ugm.ac.id/*
 // @grant        GM_getResourceURL
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @require      https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.3/dist/ort.wasm.min.js
 // @resource     ortwasm https://unpkg.com/onnxruntime-web@1.17.3/dist/ort-wasm-simd.wasm
-// @resource     model https://raw.githubusercontent.com/dzaki-bv/simaster-autologin/main/common_old.onnx
+// @resource     model https://raw.githubusercontent.com/dzakihf/ugm-autologin/main/common_old.onnx
 // @updateURL    none
 // @downloadURL  none
 // @run-at       document-start
@@ -61,7 +62,7 @@
 // ##   2. Ctrl+S (Save), lalu Save & Close                                 ##
 // ##                                                                       ##
 // ##   Mau edit lagi nanti: ikon Violentmonkey -> Open Dashboard (gerigi)  ##
-// ##   -> Installed scripts -> SIMASTER autologin -> ikon </> (Edit)       ##
+// ##   -> Installed scripts -> UGM autologin -> ikon </> (Edit)            ##
 // ##                                                                       ##
 // ##   Contoh:  const USERNAME = "namakamu";                               ##
 // ##            const PASSWORD = "passwordkamu";                           ##
@@ -90,17 +91,22 @@ const PASSWORD = "";
     return true;
   }
 
-  // A manual click on "Masuk dengan UGM ID" pauses the whole script for
-  // 2 minutes (shared across simaster/sso via GM storage).
-  const PAUSE_MS = 2 * 60 * 1000;
+  // Manual actions pause the whole script for 5 minutes (shared across
+  // simaster/sso/elok via GM storage):
+  //  - clicking "Masuk dengan UGM ID" on SIMASTER (manual login)
+  //  - clicking "Keluar" (logout) on ELOK, so it doesn't log straight back in
+  const PAUSE_MS = 5 * 60 * 1000;
   const paused = () => Date.now() < (GM_getValue("manualUntil", 0) || 0);
   document.addEventListener("click", (e) => {
     if (!e.isTrusted) return; // ignore our own .click() calls
     const el = e.target.closest?.("a, button, input[type=submit], input[type=button]");
     if (!el) return;
-    const label = (el.textContent || el.value || "") + " " + (el.getAttribute("href") || "");
-    if (/ugm\s*id/i.test(label) || label.includes("signin_proses"))
-      GM_setValue("manualUntil", Date.now() + PAUSE_MS);
+    const href = el.getAttribute("href") || "";
+    const label = (el.textContent || el.value || "") + " " + href;
+    const manualLogin = /ugm\s*id/i.test(label) || href.includes("signin_proses");
+    const elokLogout = location.hostname === "elok.ugm.ac.id" &&
+      (href.includes("/login/logout.php") || el.dataset.identifier === "logout,moodle");
+    if (manualLogin || elokLogout) GM_setValue("manualUntil", Date.now() + PAUSE_MS);
   }, true);
 
   function login() {
@@ -110,8 +116,8 @@ const PASSWORD = "";
     const btn = document.querySelector('input[type="submit"][value="LOGIN"]');
     if (!user || !pass || !btn) return;
     if (!USERNAME || !PASSWORD) {
-      alert("SIMASTER autologin: username/password belum diisi.\n" +
-            "Buka Violentmonkey → SIMASTER autologin → edit, isi USERNAME dan PASSWORD di bagian atas.");
+      alert("UGM autologin: username/password belum diisi.\n" +
+            "Buka Violentmonkey → UGM autologin → edit, isi USERNAME dan PASSWORD di bagian atas.");
       return;
     }
     for (const [el, v] of [[user, USERNAME], [pass, PASSWORD]]) {
@@ -122,10 +128,24 @@ const PASSWORD = "";
     if (allowAuto("autoLogin")) btn.click();
   }
 
-  // signin_proses redirects to the UGM SSO (CAS) form — only auto-login there
-  // when it was reached from SIMASTER.
+  // ELOK (Moodle): when logged out, click the "SSO UGM" button.
+  function elokSSO() {
+    if (paused()) return;
+    const span = [...document.querySelectorAll("span.rui-login-btn-txt")]
+      .find((el) => el.textContent.trim() === "SSO UGM");
+    const link = span?.closest("a");
+    if (link && allowAuto("elokSSO")) link.click();
+  }
+  if (location.hostname === "elok.ugm.ac.id") {
+    if (document.readyState === "loading")
+      document.addEventListener("DOMContentLoaded", elokSSO, { once: true });
+    else elokSSO();
+  }
+
+  // UGM SSO (CAS) form — only auto-login when it was reached from SIMASTER or ELOK.
+  const service = decodeURIComponent(location.search);
   if (location.hostname === "sso.ugm.ac.id" &&
-      decodeURIComponent(location.search).includes("simaster.ugm.ac.id")) {
+      (service.includes("simaster.ugm.ac.id") || service.includes("elok.ugm.ac.id"))) {
     if (document.readyState === "loading")
       document.addEventListener("DOMContentLoaded", login, { once: true });
     else login();

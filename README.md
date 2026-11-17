@@ -1,4 +1,4 @@
-# SIMASTER autologin
+# UGM autologin (SIMASTER + ELOK)
 
 ## Cara pasang
 
@@ -18,31 +18,37 @@
 ### Langkah 2 — Pasang script
 
 1. Buka link ini:
-   https://raw.githubusercontent.com/dzaki-bv/simaster-autologin/main/simaster-captcha.user.js
+   https://raw.githubusercontent.com/dzakihf/ugm-autologin/main/ugm-autologin.user.js
 2. Violentmonkey membuka halaman install. Klik **+Edit** (bukan *Install*) — script langsung terpasang dan editornya terbuka.
 
    > ⚠️ Kode di bagian bawah halaman install itu cuma **pratinjau, tidak bisa diedit**. Pakai tombol **+Edit**.
 
 3. Di editor, bagian paling atas (di bawah baris `@match` / `@grant`) ada kotak besar. Isi `USERNAME` dan `PASSWORD` UGM ID kamu **di antara tanda kutip**.
 4. Tekan **Ctrl+S** (atau klik **Save**), lalu **Save & Close**.
-5. Buka SIMASTER dan login lewat UGM ID — selanjutnya otomatis.
+5. Buka SIMASTER atau ELOK — login selanjutnya otomatis.
 
-Mau ganti username/password nanti: ikon **Violentmonkey** → **Open Dashboard** (ikon gerigi ⚙) → **Installed scripts** → **SIMASTER autologin** → ikon **`</>`** (Edit).
+Mau ganti username/password nanti: ikon **Violentmonkey** → **Open Dashboard** (ikon gerigi ⚙) → **Installed scripts** → **UGM autologin** → ikon **`</>`** (Edit).
 
 Script ini **tidak auto-update** (supaya username/password yang kamu isi tidak tertimpa). Untuk versi baru, install ulang dari link di atas lalu isi lagi.
 
 ## Apa yang dilakukan
 
-Userscript Violentmonkey untuk login SIMASTER UGM otomatis:
+Userscript Violentmonkey untuk login otomatis ke situs UGM:
 
-1. Di halaman SSO UGM (`sso.ugm.ac.id/cas/login`, kalau datang dari SIMASTER) username dan password diisi, lalu **LOGIN** dipencet.
+**SIMASTER** (`simaster.ugm.ac.id`)
+1. Di halaman SSO UGM, username dan password diisi, lalu **LOGIN** dipencet.
 2. Di halaman captcha SIMASTER, captcha dibaca langsung di browser pakai model [ddddocr](https://github.com/sml2h3/ddddocr) (ONNX, jalan via onnxruntime-web), diisi, lalu **Proses** dipencet.
+
+**ELOK** (`elok.ugm.ac.id`)
+1. Kalau belum login, tombol **SSO UGM** dipencet.
+2. Di halaman SSO UGM, username dan password diisi, lalu **LOGIN** dipencet.
 
 Tidak perlu Python / server. Semua jalan di browser.
 
 ## Catatan
 
-- Kalau tombol **Masuk dengan UGM ID** dipencet manual, script berhenti 2 menit (login manual).
-- Maksimal 3 submit otomatis per menit, supaya tidak looping kalau captcha/password salah.
+- Kalau tombol **Masuk dengan UGM ID** di SIMASTER dipencet manual, script berhenti **5 menit** (login manual).
+- Kalau **Keluar** (logout) di ELOK dipencet, script berhenti **5 menit**, supaya tidak langsung login lagi.
+- Maksimal 3 klik otomatis per menit (per langkah), supaya tidak looping kalau captcha/password salah.
 - Password tersimpan sebagai teks biasa di dalam script di Violentmonkey. Jangan pakai di komputer bersama, dan jangan bagikan script yang sudah kamu isi.
 - Model `common_old.onnx` berasal dari ddddocr (MIT License).
