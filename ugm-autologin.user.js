@@ -34,7 +34,7 @@
 // ==UserScript==
 // @name         UGM autologin
 // @namespace    https://github.com/dzakihf/ugm-autologin
-// @version      4.2
+// @version      4.3
 // @description  Auto-login SIMASTER & ELOK UGM: clicks SSO UGM on ELOK, fills UGM ID on SSO, solves the SIMASTER captcha in-browser (ddddocr), submits.
 // @match        https://simaster.ugm.ac.id/*
 // @match        https://sso.ugm.ac.id/cas/login*
@@ -93,8 +93,9 @@ const PASSWORD = "";
     return true;
   }
 
-  // Manual actions pause the whole script for 5 minutes (shared across
-  // simaster/sso/elok via GM storage):
+  // Manual actions pause the username/password autofill and ELOK's SSO click
+  // for 5 minutes (shared across simaster/sso/elok via GM storage). The
+  // SIMASTER captcha is always solved automatically:
   //  - clicking "Masuk dengan UGM ID" on SIMASTER (manual login)
   //  - clicking "Keluar" (logout) on ELOK, so it doesn't log straight back in
   const PAUSE_MS = 5 * 60 * 1000;
@@ -220,7 +221,6 @@ const PASSWORD = "";
 
   let lastSolvedSrc = null;
   function solve(img) {
-    if (paused()) return log("paused, not solving captcha");
     // At document-start the image can finish loading before the form is parsed.
     if (document.readyState === "loading" && !document.querySelector("input#captcha"))
       return document.addEventListener("DOMContentLoaded", () => solve(img), { once: true });
@@ -268,7 +268,7 @@ const PASSWORD = "";
   function hook(img) {
     if (img.__captchaHooked) return;
     img.__captchaHooked = true;
-    if (!paused()) getSession().catch(() => {});
+    getSession().catch(() => {});
     img.addEventListener("load", () => solve(img)); // also re-solves on captcha refresh
     if (img.complete) solve(img);
   }

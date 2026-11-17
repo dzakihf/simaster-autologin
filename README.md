@@ -47,8 +47,8 @@ Tidak perlu Python / server. Semua jalan di browser.
 
 ## Catatan
 
-- Kalau tombol **Masuk dengan UGM ID** di SIMASTER dipencet manual, script berhenti **5 menit** (login manual).
-- Kalau **Keluar** (logout) di ELOK dipencet, script berhenti **5 menit**, supaya tidak langsung login lagi.
+- Kalau tombol **Masuk dengan UGM ID** di SIMASTER dipencet manual, username & password **tidak** diisi otomatis selama **5 menit** (kamu isi sendiri). Captcha tetap diisi & dikirim otomatis.
+- Kalau **Keluar** (logout) di ELOK dipencet, ELOK tidak login otomatis selama **5 menit**, supaya tidak langsung login lagi.
 - Maksimal 3 klik otomatis per menit (per langkah), supaya tidak looping kalau captcha/password salah.
 - Password tersimpan sebagai teks biasa di dalam script di Violentmonkey. Jangan pakai di komputer bersama, dan jangan bagikan script yang sudah kamu isi.
 - Model `common_old.onnx` berasal dari ddddocr (MIT License).
