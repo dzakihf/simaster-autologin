@@ -34,9 +34,9 @@
 // ==UserScript==
 // @name         UGM autologin
 // @namespace    https://github.com/dzakihf/ugm-autologin
-// @version      4.1
+// @version      4.2
 // @description  Auto-login SIMASTER & ELOK UGM: clicks SSO UGM on ELOK, fills UGM ID on SSO, solves the SIMASTER captcha in-browser (ddddocr), submits.
-// @match        https://simaster.ugm.ac.id/ugmfw/signin_simaster*
+// @match        https://simaster.ugm.ac.id/*
 // @match        https://sso.ugm.ac.id/cas/login*
 // @match        https://elok.ugm.ac.id/*
 // @grant        GM_getResourceURL
@@ -218,13 +218,16 @@ const PASSWORD = "";
     })());
   }
 
+  let lastSolvedSrc = null;
   function solve(img) {
     if (paused()) return log("paused, not solving captcha");
     // At document-start the image can finish loading before the form is parsed.
     if (document.readyState === "loading" && !document.querySelector("input#captcha"))
       return document.addEventListener("DOMContentLoaded", () => solve(img), { once: true });
     const input = document.querySelector("input#captcha");
-    if (!input || !img.naturalWidth) return;
+    if (!input || !img.naturalWidth) return log("captcha input/image not ready");
+    if (img.currentSrc === lastSolvedSrc) return;
+    lastSolvedSrc = img.currentSrc;
     getSession()
       .then((session) => ddddRecognize(session, img))
       .then((raw) => {
@@ -270,7 +273,20 @@ const PASSWORD = "";
     if (img.complete) solve(img);
   }
 
-  const find = () => { const img = document.querySelector("img#captchaView"); if (img) hook(img); };
-  find();
-  new MutationObserver(find).observe(document, { childList: true, subtree: true });
+  // Runs on every SIMASTER page (the captcha retry page may live outside
+  // /signin_simaster). Only acts when the captcha image is present; stops
+  // watching pages that never get one.
+  if (location.hostname === "simaster.ugm.ac.id") {
+    const find = () => {
+      const img = document.querySelector("img#captchaView");
+      if (img) hook(img);
+      return !!img;
+    };
+    const mo = new MutationObserver(find);
+    if (!find()) mo.observe(document, { childList: true, subtree: true });
+    addEventListener("load", () => {
+      if (!find()) mo.disconnect();
+      else log("captcha page:", location.href);
+    }, { once: true });
+  }
 })();

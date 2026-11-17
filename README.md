@@ -35,7 +35,7 @@ Script ini **tidak auto-update** (supaya username/password yang kamu isi tidak t
 
 Userscript Violentmonkey untuk login otomatis ke situs UGM:
 
-**SIMASTER** (`simaster.ugm.ac.id`)
+**SIMASTER** (`simaster.ugm.ac.id`, termasuk halaman captcha ulang kalau captcha salah)
 1. Di halaman SSO UGM, username dan password diisi, lalu **LOGIN** dipencet.
 2. Di halaman captcha SIMASTER, captcha dibaca langsung di browser pakai model [ddddocr](https://github.com/sml2h3/ddddocr) (ONNX, jalan via onnxruntime-web), diisi, lalu **Proses** dipencet.
 
