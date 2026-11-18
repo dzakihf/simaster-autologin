@@ -52,3 +52,11 @@ Tidak perlu Python / server. Semua jalan di browser.
 - Maksimal 3 klik otomatis per menit (per langkah), supaya tidak looping kalau captcha/password salah.
 - Password tersimpan sebagai teks biasa di dalam script di Violentmonkey. Jangan pakai di komputer bersama, dan jangan bagikan script yang sudah kamu isi.
 - Model `common_old.onnx` berasal dari ddddocr (MIT License).
+
+## WhatsApp chat navigation
+
+Script terpisah: `whatsapp-chat-nav.user.js` (pasang dengan cara yang sama lewat Violentmonkey, tanpa username/password).
+
+Di `web.whatsapp.com`:
+- **Ctrl + ,** → chat sebelumnya (atas)
+- **Ctrl + .** → chat berikutnya (bawah)
