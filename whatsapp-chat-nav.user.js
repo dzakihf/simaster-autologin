@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WhatsApp chat navigation
 // @namespace    https://github.com/dzakihf/ugm-autologin
-// @version      1.0
+// @version      1.1
 // @description  WhatsApp Web: Ctrl+, = chat sebelumnya (atas), Ctrl+. = chat berikutnya (bawah).
 // @match        https://web.whatsapp.com/*
 // @grant        none
@@ -28,10 +28,15 @@
   }
 
   function open(row) {
-    const target = row.querySelector('[role="gridcell"]') || row.firstElementChild || row;
     row.scrollIntoView({ block: 'nearest' });
-    for (const type of ['mousedown', 'mouseup', 'click']) {
-      target.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window }));
+    // WhatsApp ignores plain synthetic clicks: it needs pointer events with real coordinates
+    const b = row.getBoundingClientRect();
+    const x = b.left + b.width / 2;
+    const y = b.top + b.height / 2;
+    const target = document.elementFromPoint(x, y) || row;
+    const o = { bubbles: true, cancelable: true, view: window, clientX: x, clientY: y, button: 0, pointerId: 1, pointerType: 'mouse', isPrimary: true };
+    for (const type of ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click']) {
+      target.dispatchEvent(type.startsWith('pointer') ? new PointerEvent(type, o) : new MouseEvent(type, o));
     }
   }
 
