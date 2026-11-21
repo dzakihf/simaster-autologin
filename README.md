@@ -60,3 +60,17 @@ Script terpisah: `whatsapp-chat-nav.user.js` (pasang dengan cara yang sama lewat
 Di `web.whatsapp.com`:
 - **Ctrl + ,** → chat sebelumnya (atas)
 - **Ctrl + .** → chat berikutnya (bawah)
+
+## WhatsApp message select + reply
+
+Script terpisah: `whatsapp-message-reply.user.js` (pasang lewat Violentmonkey juga).
+
+Di `web.whatsapp.com`, di dalam chat yang sedang terbuka:
+- **Shift + Tab** (dari kotak ketik) → pilih bubble chat paling bawah
+- **↑ / ↓** → navigasi native WhatsApp antar pesan
+- **E** → edit pesan yang dipilih (hanya pesan sendiri, maks. 15 menit; kalau tidak bisa, bubble berkedip merah)
+- **R** → reply pesan yang dipilih (kotak ketik langsung fokus)
+- **Esc** (saat bubble terpilih) → kembali ke kotak ketik, chat tidak ditutup
+- **Delete** → hapus pesan yang dipilih **untuk semua orang, tanpa konfirmasi**. Kalau tidak boleh (pesan orang lain / sudah terlalu lama) tidak ada yang dihapus dan bubble berkedip merah. Di chat "You" (Message yourself), yang memang tidak punya opsi itu, pesan dihapus biasa.
+
+Tidak klik-klik menu: script memanggil fungsi internal WhatsApp Web langsung (`Cmd.sendRevokeMsgs`, `chat.composeQuotedMsg` + `ComposeBoxActions.focus`, modal `WAWebMessageEditFlow`). Kalau WhatsApp mengganti nama modulnya, lihat console (`[wa-kbd]`).
